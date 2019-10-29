@@ -1,5 +1,11 @@
 // import Web3 from  '../../node_modules/web3/src/index.js';
 // let TruffleContract = require('truffle-contract');
+
+
+let oneReviewDiv = function({roll, review, rating, lHash, wl}){
+  return(`<div> <ul class=\"horiList\"> <li>${roll}</li> <li>${review}</li> <li>${rating}</li> <li>${lHash}</li> <li>${wl}</li> </ul></div>`)
+}
+
 App = {
   web3Provider: null,
   web3: {},
@@ -31,7 +37,7 @@ App = {
       // Instantiate a new truffle contract from the artifact
       let abi = tcr.abi;
       console.log(App.web3);
-      App.tcrInstance = new App.web3.eth.Contract(abi, "0x48d6F83561b0E2f65B10ace878DB7A43Ea116C91");
+      App.tcrInstance = new App.web3.eth.Contract(abi, "0x31D76BcDd80F21556071c814ADeDBde0A13A5cBc");
       // Connect provider to interact with contract
       App.tcrInstance.setProvider(App.web3Provider);
       App.listenForEvents();
@@ -40,7 +46,7 @@ App = {
     }).then(function () {
       $.getJSON("Token.json", function (token) {
         let abi = token.abi;
-        App.tokenInstance = new App.web3.eth.Contract(abi, "0x662a9Afb03C4d7EC9BB3C38579bC9A9F22382259");
+        App.tokenInstance = new App.web3.eth.Contract(abi, "0x34d3bDBc945a0D6Afb4C65A2051E246917094aB4");
         // Connect provider to interact with contract
         App.tokenInstance.setProvider(App.web3Provider);
         return App.render();
@@ -69,18 +75,85 @@ App = {
     // });
 
     // Load contract data
-    App.tcrInstance.methods.getAllListings().call().then(function (l) {
-      let listings = [];
-      for (let i = 0; i < l[0].length; i++) {
-        listings.push([l[0][i], l[1][i], l[2][i]]);
-      }
-      console.log(listings);
+    let courses = {};
+    // let listings = []];
 
+    
+    App.tcrInstance.methods.getAllListings().call().then(function (l) {
+      for (let i = 0; i < l[0].length; i++) {
+        let item = {};
+        let rev = l[0][i].split(' ');
+        item = {
+          'roll': rev[0],
+          'review': rev[2],
+          'rating': rev[3],
+          'lHash': l[1][i],
+          'wl' : l[2][i],             
+        } ;
+        if(courses[rev[1]]){
+          let avg = courses[rev[1]].avgRating;
+          let nR = courses[rev[1]].numRatings;
+          courses[rev[1]].avgRating = (avg*nR + parseFloat(rev[3]))/(nR +1);
+          courses[rev[1]].numRatings = nR +1;
+          courses[rev[1]].data.push(item);
+        }else{
+          courses[rev[1]] = {
+            'avgRating' : parseFloat(rev[3]),
+            'numRatings' : 1,
+            'data': [item],
+          };
+        }
+      }
+      console.log(courses);
+      var candidatesResults = $("#candidatesResults");
+      candidatesResults.empty();
+      // console.log(minDeposit[0]);
+      Object.keys(courses).forEach(function(key) {
+        let cTemplate = "<tr class=\"collapsible\"> <th>" + key + "</th><td>" + courses[key]['avgRating']+ "</td><td>" + courses[key]['numRatings'] + "</td></tr>";
+        let reviewDivs = [];
+        courses[key].data.forEach(function(item){
+            reviewDivs.push(oneReviewDiv(item))
+        });
+        
+        let content = "<div class=\"content\">" + reviewDivs.join()+"</div>"
+        candidatesResults.append(cTemplate);
+        candidatesResults.append(content);
+        console.log(cTemplate);
+      });
+      loader.hide();
+      content.show();
+      var coll = document.getElementsByClassName("collapsible");
+      console.log(coll);
+      var i;
+      
+      for (i = 0; i < coll.length; i++) {
+
+        coll[i].addEventListener("click", function() {
+          this.classList.toggle("active");
+          var content = this.nextElementSibling;
+          console.error("content ye hai",content);
+          if (content.style.maxHeight){
+            content.style.maxHeight = null;
+          } else {
+            // content.style.maxHeight = content.scrollHeight + "px";
+            content.style.maxHeight = "100px";
+          } 
+        });
+      }
     });
-    console.log("1");
-    console.log(App.account);
-    App.tokenInstance.methods.balanceOf("0x31f8a4A938a7494aE27554588BF928096B9007F8").call().then(console.log);
-    console.log("2");
+    // console.log("1");
+    // console.log(App.account);
+    // App.tokenInstance.methods.balanceOf("0x9AeCa19490FE0b4FF3Bbd021c9e7929beDa4BA77").call().then(console.log);
+    // console.log("2");
+    // console.log(listings);
+    // App.contracts.Tcr.options.data = {}
+    // App.contracts.Tcr.deploy().then(function(instance) {
+    //   console.log("Hello");
+    //   App.tcrInstance = instance;
+    //   console.log(App.tcrInstance.address);
+    // }).catch(function(error) {
+    //   console.warn(error);
+    // });
   },
 
   propose: async function () {
@@ -117,9 +190,18 @@ App = {
     let choice = $('#Vote').val();
     App.tokenInstance.methods.approve(App.tcrInstance.options.address, 10000)
     .send(function(r){
-    App.tcrInstance.methods.vote(hash, amount, 0).send(console.log)
+    App.tcrInstance.methods.vote(hash, amount, choice).send(console.log)
     .on('error',function(error){alert("Failed")})
     });
+  },
+
+  Claim: async function () {
+    let hash = $('#ClaimHash').val();
+    let id = $('#ChallengeID').val();
+    App.tcrInstance.methods.updateStatus(hash).send(function(r){
+    App.tcrInstance.methods.claimRewards(id).send()
+    .on('error',function(error){alert("Failed")})} )
+    .on('error',function(error){alert("Failed")});
   },
 
   listenForEvents: async function() {
