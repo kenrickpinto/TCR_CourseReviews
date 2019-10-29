@@ -28,7 +28,7 @@ App = {
       App.contracts.Tcr = TruffleContract(tcr);
       // Connect provider to interact with contract
       App.contracts.Tcr.setProvider(App.web3Provider);
-    
+      App.listenForEvents();
 
     }).then(function(){
       $.getJSON("Token.json", function(token) {
@@ -73,30 +73,21 @@ App = {
       console.log("Hello");
       App.tcrInstance = instance;
       console.log(App.tcrInstance.address);
-      // return App.tcrInstance.getListingDetails("0x3136443037303035354545343735000000000000000000000000000000000000");
-      return App.tcrInstance.getDetails();
+      //return App.tcrInstance.getListingDetails("0x3136443037303035354545343735000000000000000000000000000000000000");
       // return 10;
+      return App.tcrInstance.getAllCourses();
+      
     }).then(function(minDeposit) {
       var candidatesResults = $("#candidatesResults");
       candidatesResults.empty();
       console.log(minDeposit);
-      // for (var i = 1; i <= candidatesCount; i++) {
-      //   electionInstance.candidates(i).then(function(candidate) {
-      //     var id = candidate[0];
-      //     var name = candidate[1];
-      //     var voteCount = candidate[2];
-
-      //     // Render candidate Result
-      //     var candidateTemplate = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + voteCount + "</td></tr>"
-      //     candidatesResults.append(candidateTemplate);
-      //   });
-      // }
-
       loader.hide();
       content.show();
     }).catch(function(error) {
       console.warn(error);
     });
+
+
   },
 
   propose: function() {
@@ -104,20 +95,95 @@ App = {
     console.log(typeof(App.tcrInstance.address));
     console.log(App.account);
     App.tokenInstance.approve(App.tcrInstance.address, 10000, { from: App.account });
-    App.tcrInstance.propose(200, "16D070055", "EE475", "naice", 4);
+    //App.tcrInstance.propose(200, "16D070055", "EE475", "naice", 4);
 
+    let roll = $('#roll').val();
+    let course_code = $('#course').val();
+    let  review = $('#review').val();
+    let amount = $('#amount').val();
+    let rating = $('#rating').val();
+    console.log(amount);
+    App.tcrInstance.propose(amount, roll, course_code, review, rating)
+    
+  },
 
-  //   App.contracts.Tcr.deployed().then(function(instance) {
-  //     return instance.vote(candidateId, { from: App.account });
-  //   }).then(function(result) {
-  //     // Wait for votes to update
-  //     $("#content").hide();
-  //     $("#loader").show();
-  //   }).catch(function(err) {
-  //     console.error(err);
-  //   });
+  challenge: function() {
+    App.tokenInstance.approve(App.tcrInstance.address, 10000, { from: App.account });
+
+    let hash = $('#hash').val();
+    let amount = $('#challenge_amount').val();
+    
+    console.log(amount);
+    App.tcrInstance.challenge(hash,amount);
+    
+  },
+
+  vote: function() {
+    App.tokenInstance.approve(App.tcrInstance.address, 10000, { from: App.account });
+
+    let hash = $('#VoteHash').val();
+    let amount = $('#VoteAmount').val();
+    let choice = $('#Vote').val();
+    
+    console.log(amount);
+    App.tcrInstance.vote(hash,amount,choice);
+    
+  },
+  listenForEvents: function() {
+    App.contracts.Tcr.deployed().then(function(instance) {
+
+        instance._Application({}, {
+          fromBlock: 0,
+          toBlock: 'latest'
+        }).watch(function(error, event) {
+          console.log("New application", event)
+          //alert("I am an alert box!");
+          // Reload when a new vote is recorded
+          App.render();
+        });
+
+        instance._Challenge({}, {
+          fromBlock: 0,
+          toBlock: 'latest'
+        }).watch(function(error, event) {
+          console.log("New challenge", event)
+          //alert("I am an alert box!");
+          // Reload when a new vote is recorded
+          App.render();
+        });
+
+        instance._Vote({}, {
+          fromBlock: 0,
+          toBlock: 'latest'
+        }).watch(function(error, event) {
+          console.log("New vote", event)
+          //alert("I am an alert box!");
+          // Reload when a new vote is recorded
+          App.render();
+        });
+
+        instance._ResolveChallenge({}, {
+          fromBlock: 0,
+          toBlock: 'latest'
+        }).watch(function(error, event) {
+          console.log("New challenge", event)
+          //alert("I am an alert box!");
+          // Reload when a new vote is recorded
+          App.render();
+        });
+
+        instance._RewardClaimed({}, {
+          fromBlock: 0,
+          toBlock: 'latest'
+        }).watch(function(error, event) {
+          console.log("New challenge", event)
+          //alert("I am an alert box!");
+          // Reload when a new vote is recorded
+          App.render();
+        });
+
+    });
   }
-
 };
 
 $(function() {

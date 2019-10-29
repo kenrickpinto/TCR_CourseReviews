@@ -123,23 +123,23 @@ contract Tcr {
         pollNonce = INITIAL_POLL_NONCE;
     }
 
-    function uint2str(uint _i) internal pure returns (string memory _uintAsString) {
-        if (_i == 0) {
-            return "0";
-        }
-        uint j = _i;
-        uint len;
-        while (j != 0) {
-            len++;
-            j /= 10;
-        }
-        bytes memory bstr = new bytes(len);
-        uint k = len - 1;
-        while (_i != 0) {
-            bstr[k--] = byte(uint8(48 + _i % 10));
-            _i /= 10;
-        }
-        return string(bstr);
+   function uint2str(uint _i) internal pure returns (string memory _uintAsString) {
+    if (_i == 0) {
+        return "0";
+    }
+    uint j = _i;
+    uint len;
+    while (j != 0) {
+        len++;
+        j /= 10;
+    }
+    bytes memory bstr = new bytes(len);
+    uint k = len - 1;
+    while (_i != 0) {
+        bstr[k--] = byte(uint8(48 + _i % 10));
+        _i /= 10;
+    }
+    return string(bstr);
 	}
 
     function strReview(Data memory data) private pure returns (string memory){
@@ -160,21 +160,21 @@ contract Tcr {
     // not to be used in a production use case
     function getAllListings() public view returns (string[] memory, bytes32[] memory, bool[] memory) {
         string[] memory listingArr = new string[](listingNames.length);
-	bytes32 [] memory hashArr = new bytes32[](listingHashes.length);
-	bool [] memory whitelistedArr = new bool[](listingNames.length);
+	    bytes32 [] memory hashArr = new bytes32[](listingHashes.length);
+	    bool [] memory whitelistedArr = new bool[](listingNames.length);
         for (uint256 i = 0; i < listingNames.length; i++) {
             listingArr[i] = listingNames[i];
-	    hashArr[i] = listingHashes[i];
-	    Listing memory templisting = listings[listingHashes[i]];
-	    whitelistedArr[i] = templisting.whitelisted;
+	        hashArr[i] = listingHashes[i];
+	        Listing memory templisting = listings[listingHashes[i]];
+	        whitelistedArr[i] = templisting.whitelisted;
         }
         return (listingArr, hashArr, whitelistedArr);
     }
 
     function getAllCourses() public view returns (string[] memory,uint[] memory, uint [] memory) {
         string[] memory courseArr = new string[](courseNames.length);
-	uint[] memory coursetotalArr = new uint[](courseNames.length);
-	uint[] memory numberReviewsArr = new uint[] (courseNames.length);
+	    uint[] memory coursetotalArr = new uint[](courseNames.length);
+	    uint[] memory numberReviewsArr = new uint[] (courseNames.length);
 
         for (uint256 i = 0; i < courseNames.length; i++) {
             courseArr[i] = courseNames[i];
@@ -240,7 +240,7 @@ contract Tcr {
 		rating : _rating
 	});
 	
-	listingHashes.push(_listingHash);
+	    listingHashes.push(_listingHash);
         listingNames.push(strReview(listing.data));
         listing.arrIndex = listingNames.length - 1;
 
@@ -265,7 +265,7 @@ contract Tcr {
     	}
 	//change ended
 	
-	require(!isWhitelisted(_listingHash), "Listing is already whitelisted.");
+	    require(!isWhitelisted(_listingHash), "Listing is already whitelisted.");
         require(!appWasMade(_listingHash), "Listing is already in apply stage.");
         require(_amount >= minDeposit, "Not enough stake for application.");
 	
