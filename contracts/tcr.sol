@@ -154,16 +154,25 @@ contract Tcr {
     // get all listing names (for UI)
     // not to be used in a production use case
     function getAllListings() public view returns (string[] memory, bytes32[] memory, bool[] memory) {
-        string[] memory listingArr = new string[](listingNames.length);
-        bytes32[] memory hashArr = new bytes32[](listingHashes.length);
-        bool[] memory whitelistedArr = new bool[](listingNames.length);
+        uint count = 0;
         Listing memory templisting;
         for (uint256 i = 0; i < listingNames.length; i++) {
             templisting = listings[listingHashes[i]];
+            if(bytes(templisting.data.course).length > 0)
+                count = count + 1;
+            }
+        string[] memory listingArr = new string[](count);
+        bytes32[] memory hashArr = new bytes32[](count);
+        bool[] memory whitelistedArr = new bool[](count);
+        
+        for (uint256 i = 0; i < listingNames.length; i++) {
+            templisting = listings[listingHashes[i]];
+            if(bytes(templisting.data.course).length > 0)
+            {
             listingArr[i] = strReview(templisting.data);
 	        hashArr[i] = listingHashes[i];
-            whitelistedArr[i] = templisting.whitelisted;
-        }
+            whitelistedArr[i] = templisting.whitelisted;}
+            }
         return (listingArr, hashArr, whitelistedArr);
     }
 
