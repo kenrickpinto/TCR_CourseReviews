@@ -31,8 +31,7 @@ App = {
       // Instantiate a new truffle contract from the artifact
       let abi = tcr.abi;
       console.log(App.web3);
-      App.tcrInstance = new App.web3.eth.Contract(abi, "0x2FA656796b72f200baEC1FBF64c5D7e31F4c51D3") ;
-      //  TruffleContract(tcr);
+      App.tcrInstance = new App.web3.eth.Contract(abi, "0x579b788b1adAe0236d3BF4766163879b4b2Bb252");
       // Connect provider to interact with contract
       App.tcrInstance.setProvider(App.web3Provider);
       //App.listenForEvents();
@@ -40,12 +39,10 @@ App = {
 
     }).then(function(){
       $.getJSON("Token.json", function(token) {
-        // Instantiate a new truffle contract from the artifact
-        // App.contracts.Token = TruffleContract(token);
+        let abi = token.abi;
+        App.tokenInstance = new App.web3.eth.Contract(abi, "0xF5D1D9bc11Ff0B3238A4251F8e8F2dcC9e428EAb");
         // Connect provider to interact with contract
-        // App.contracts.Token.setProvider(App.web3Provider);
-      
-  
+        App.tokenInstance.setProvider(App.web3Provider);
         return App.render();
       });
     });    
@@ -62,17 +59,23 @@ App = {
     ethereum.enable().then(function(accounts){
       console.log(accounts);
       App.account = accounts[0];
-      App.tcrInstance.from = App.account;
-    })
+      App.tcrInstance.options.from = App.account;
+      App.tokenInstance.options.from = App.account;
+    });
     
     // App.contracts.Token.deployed().then(function(instance) {
     //   App.tokenInstance = instance;
     // });
 
-    // Load contract 
-    console.log("1");
-    let listings =  App.tcrInstance.methods.getAllListings().call().then(console.log);
-    console.log("2");
+    // Load contract data
+    App.tcrInstance.methods.getAllListings().call().then(function(l){
+      let listings = [];
+      for(let i=0; i<l[0].length; i++) {
+        listings.push([l[0][i], l[1][i], l[2][i]]);
+      }
+      console.log(listings);
+      
+    });
     // console.log(listings);
     // App.contracts.Tcr.options.data = {}
     // App.contracts.Tcr.deploy().then(function(instance) {
@@ -109,9 +112,9 @@ App = {
 
   propose: function() {
     // var candidateId = $('#candidatesSelect').val();
-    console.log(typeof(App.tcrInstance.address));
+    console.log("address", App.tcrInstance.options.address);
     console.log(App.account);
-    App.tokenInstance.approve(App.tcrInstance.address, 10000, { from: App.account });
+    App.tokenInstance.methods.approve(App.tcrInstance.address, 10000).send();
     //App.tcrInstance.propose(200, "16D070055", "EE475", "naice", 4);
 
     let roll = $('#roll').val();
