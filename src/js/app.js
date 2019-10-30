@@ -285,14 +285,32 @@ App = {
       }
     })
     //let hash = App.challenges[lHash]
-    if (flag == 0)
+   /* if (flag == 0)
      { App.tcrInstance.methods.claimRewards(id).send()
       .on('error',function(error){alert("Failed")})
-     }
+     }*/
   },
 
-  listenForEvents: function() {
-
+  listenForEvents: async function() {
+    var latestBlock;
+    App.web3.eth.getBlockNumber()
+    .then(function(b){
+      latestBlock = b;
+    });
+    // web3.eth.getBlock("latest").then(console.log); //get the latest blocknumber
+    // latestBlock = latestBlock.number;
+    // console.log("Latest - ",latestBlock);
+    App.tcrInstance.events._Application({fromBlock: 'latest'}, (error, event) => { 
+      if (error) {
+        console.log(error); return; 
+      } else {
+        if(event.blockNumber != latestBlock) {   //accept only new events
+          // alert("I am app");
+          latestBlock = latestBlock + 1;   //update the latest blockNumber
+          App.render();
+        }
+      }
+    });
 
     App.tcrInstance.events._Challenge({fromBlock: 'latest'}, (error, event) => { 
       if (error) {
