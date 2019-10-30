@@ -236,7 +236,10 @@ App = {
   vote: async function () {
     let hash = $('#VoteHash').val();
     let amount = $('#VoteAmount').val();
-    let choice = $('#Vote').val();
+    let vote = $('#Vote').val();
+    let choice = false;
+    if (vote != 0)
+        choice = true;
     App.tokenInstance.methods.approve(App.tcrInstance.options.address, 10000)
     .send(function(r){
     App.tcrInstance.methods.vote(hash, amount, choice).send(console.log)
@@ -244,14 +247,36 @@ App = {
     });
   },
 
-  // Claim has to done by you. This is not correct
+
   Claim: async function () {
-    let hash = $('#ClaimHash').val();
+    //let hash = $('#ClaimHash').val();
+    var flag = 0;
     let id = $('#ChallengeID').val();
-    App.tcrInstance.methods.updateStatus(hash).send(function(r){
-    App.tcrInstance.methods.claimRewards(id).send()
-    .on('error',function(error){alert("Failed")})} )
-    .on('error',function(error){alert("Failed")});
+    Object.keys(App.challenges).forEach(function(key) {
+      
+      if (App.challenges[key] = id) {
+      console.log('Key : ' + key + ', Value : ' + App.challenges[key]);
+      //var hash = App.web3.utils.fromAscii(key);
+      var $temp = key; 
+      var hash = $temp//.val() 
+      console.log(hash)     
+      //var hash = bytes32(parseInt(key, 32));
+
+      App.tcrInstance.methods.updateStatus(hash).send(function(r){
+      App.tcrInstance.methods.claimRewards(id).send()
+      .on('error',function(error){alert("Failed")})} )
+      .on('error',function(error){alert("Failed")});
+      flag = 1;
+     /* App.tcrInstance.methods.updateStatus(hash).send
+      .on('error',function(error){alert("Failed")});*/
+     
+      }
+    })
+    //let hash = App.challenges[lHash]
+    if (flag == 0)
+     { App.tcrInstance.methods.claimRewards(id).send()
+      .on('error',function(error){alert("Failed")})
+     }
   },
 
   listenForEvents: function() {

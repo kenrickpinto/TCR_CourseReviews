@@ -43873,10 +43873,16 @@
       "links": {},
       "address": "0xcd3255a2887d8CAfbC4019BF850591E4eBDfAeC3",
       "transactionHash": "0xc45106799cabeffc11ebc06b77bf8af999acdf241022f269c135493464818a4c"
+    },
+    "1572454467243": {
+      "events": {},
+      "links": {},
+      "address": "0xcd3255a2887d8CAfbC4019BF850591E4eBDfAeC3",
+      "transactionHash": "0xc45106799cabeffc11ebc06b77bf8af999acdf241022f269c135493464818a4c"
     }
   },
   "schemaVersion": "3.0.2",
-  "updatedAt": "2019-10-30T12:44:32.322Z",
+  "updatedAt": "2019-10-30T16:54:58.355Z",
   "devdoc": {
     "methods": {}
   },
