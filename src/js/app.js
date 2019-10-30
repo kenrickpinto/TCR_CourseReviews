@@ -302,17 +302,6 @@ App = {
           // App.render();
         });
 
-        App.tcrInstance.events._Challenge({}, {
-          fromBlock: 0,
-          toBlock: 'latest'
-        }).on('data',function( event) {
-          console.log("New challenge", event)
-          //alert("I am an alert box!");
-          // Reload when a new vote is recorded
-          App.render();
-        }
-      }
-    });
 
     App.tcrInstance.events._Challenge({fromBlock: 'latest'}, (error, event) => { 
       if (error) {
