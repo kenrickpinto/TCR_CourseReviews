@@ -59,13 +59,13 @@ App = {
     if (typeof web3 !== 'undefined') {
       // If a web3 instance is already provided by Meta Mask.
       App.web3Provider = web3.currentProvider;
-      App.web3 = new Web3(web3.currentProvider);
+      web3 = new Web3(web3.currentProvider);
     } else {
       // Specify default instance if no web3 instance provided
       App.web3Provider = new Web3.providers.HttpProvider('http://localhost:8545');
-      App.web3 = new Web3(App.web3Provider);
+      web3 = new Web3(App.web3Provider);
     }
-    // App.web3 = web3;
+    App.web3 = web3;
     return App.initContract();
   },
 
@@ -74,7 +74,7 @@ App = {
       // Instantiate a new truffle contract from the artifact
       let abi = tcr.abi;
       console.log(App.web3);
-      App.tcrInstance = new App.web3.eth.Contract(abi, "0xcd3255a2887d8CAfbC4019BF850591E4eBDfAeC3");
+      App.tcrInstance = new App.web3.eth.Contract(abi, "0xd22F5F76116C1547bD5c88de7056d450f0221106");
       // Connect provider to interact with contract
       App.tcrInstance.setProvider(App.web3Provider);
       App.listenForEvents();
@@ -83,7 +83,7 @@ App = {
     }).then(function () {
       $.getJSON("Token.json", function (token) {
         let abi = token.abi;
-        App.tokenInstance = new App.web3.eth.Contract(abi, "0xbCa2c74BDF4CcfBfd4dA519595595f0075Bb6667");
+        App.tokenInstance = new App.web3.eth.Contract(abi, "0xD5b93A19e4C24F77F29abdDE2ef4c0b408Cd5216");
         // Connect provider to interact with contract
         App.tokenInstance.setProvider(App.web3Provider);
         
@@ -99,13 +99,7 @@ App = {
       App.tcrInstance.options.from = App.account;
       App.tokenInstance.options.from = App.account;
 
-      App.tcrInstance.methods.getDetails().call().then(function (details) {
-        let appLen = parseInt(details[3]);
-        console.log("Hello");
-        // setInterval(App.updateStatus  , appLen*1000);
-      });
-
-      return App.readHistory();
+      return App.render();
     });
   },
 
@@ -139,6 +133,8 @@ App = {
   
   render: function () {
     // var tcrInstance;
+    console.log("Rendering");
+
     var loader = $("#loader");
     var content = $("#content");
 
@@ -243,7 +239,7 @@ App = {
     let rating = $('#rating').val();
     console.log(amount);
 
-    App.tokenInstance.methods.approve(App.tcrInstance.options.address, 10000)
+    App.tokenInstance.methods.approve(App.tcrInstance.options.address, amount)
     .send(function(r){
     App.tcrInstance.methods.propose(amount, roll, course_code, review, rating).send(console.log)
     .on('error',function(error){alert("Failed")})
@@ -253,7 +249,7 @@ App = {
   challenge: async function () {
     let hash = $('#hash').val();
     let amount = $('#challenge_amount').val();
-    App.tokenInstance.methods.approve(App.tcrInstance.options.address, 10000)
+    App.tokenInstance.methods.approve(App.tcrInstance.options.address, amount)
     .send(function(r){
     App.tcrInstance.methods.challenge(hash, amount).send(console.log)
     .on('error',function(error){alert("Failed")})
@@ -267,7 +263,7 @@ App = {
     let choice = false;
     if (vote != 0)
         choice = true;
-    App.tokenInstance.methods.approve(App.tcrInstance.options.address, 10000)
+    App.tokenInstance.methods.approve(App.tcrInstance.options.address, amount)
     .send(function(r){
     App.tcrInstance.methods.vote(hash, amount, choice).send(console.log)
     .on('error',function(error){alert("Failed")})
@@ -277,14 +273,14 @@ App = {
 
   Claim: async function () {
     //let hash = $('#ClaimHash').val();
-    var flag = 0;
+    let flag = 0;
     let id = $('#ChallengeID').val();
     Object.keys(App.challenges).forEach(function(key) {
       
       if (App.challenges[key] = id) {
       console.log('Key : ' + key + ', Value : ' + App.challenges[key]);
       //var hash = App.web3.utils.fromAscii(key);
-      var $temp = key; 
+      let $temp = key; 
       var hash = $temp//.val() 
       console.log(hash)     
       //var hash = bytes32(parseInt(key, 32));
@@ -300,13 +296,13 @@ App = {
       }
     })
     //let hash = App.challenges[lHash]
-   /* if (flag == 0)
+    if (flag == 0)
      { App.tcrInstance.methods.claimRewards(id).send()
       .on('error',function(error){alert("Failed")})
-     }*/
+     }
   },
 
-  listenForEvents: async function() {
+  listenForEvents:  function() {
     var latestBlock;
     App.web3.eth.getBlockNumber()
     .then(function(b){
