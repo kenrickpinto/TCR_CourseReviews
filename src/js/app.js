@@ -293,15 +293,6 @@ App = {
 
   listenForEvents: function() {
 
-    App.tcrInstance.events._Application({}, {
-        fromBlock: 'latest'
-        }).on('data',function(event) {
-          console.log("New application", event)
-           alert("I am an application!");
-          // Reload when a new vote is recorded
-          // App.render();
-        });
-
 
     App.tcrInstance.events._Challenge({fromBlock: 'latest'}, (error, event) => { 
       if (error) {
