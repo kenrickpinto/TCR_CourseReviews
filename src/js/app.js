@@ -28,6 +28,8 @@ App = {
   web3Provider: null,
   web3: {},
   contracts: {},
+  courses: {},
+  challenges: {},
   account: '0x0',
   tokenInstance: {},
   tcrInstance: {},
@@ -55,7 +57,7 @@ App = {
       // Instantiate a new truffle contract from the artifact
       let abi = tcr.abi;
       console.log(App.web3);
-      App.tcrInstance = new App.web3.eth.Contract(abi, "0x31D76BcDd80F21556071c814ADeDBde0A13A5cBc");
+      App.tcrInstance = new App.web3.eth.Contract(abi, "0xb2E5190d00adCc30eE6a0C0336A559384C27Eee3");
       // Connect provider to interact with contract
       App.tcrInstance.setProvider(App.web3Provider);
       App.listenForEvents();
@@ -64,21 +66,16 @@ App = {
     }).then(function () {
       $.getJSON("Token.json", function (token) {
         let abi = token.abi;
-        App.tokenInstance = new App.web3.eth.Contract(abi, "0x34d3bDBc945a0D6Afb4C65A2051E246917094aB4");
+        App.tokenInstance = new App.web3.eth.Contract(abi, "0xCcD7bAd1a722e03ABb53158CcD53E5A8C1bA8065");
         // Connect provider to interact with contract
         App.tokenInstance.setProvider(App.web3Provider);
-        return App.render();
+        
+        return App.initMetamask();
       });
     });
   },
 
-  render: function () {
-    // var tcrInstance;
-    var loader = $("#loader");
-    var content = $("#content");
-
-    loader.show();
-    content.hide();
+  initMetamask: function(){
     var ethereum = window.ethereum;
     ethereum.enable().then(function (accounts) {
       console.log(accounts);
@@ -86,16 +83,47 @@ App = {
       console.log("Assigned - ",App.account);
       App.tcrInstance.options.from = App.account;
       App.tokenInstance.options.from = App.account;
+      return App.readHistory();
     });
+  },
 
-    // App.contracts.Token.deployed().then(function(instance) {
-    //   App.tokenInstance = instance;
-    // });
+  readHistory: function(){
+
+    App.tcrInstance.getPastEvents('_Challenge',{fromBlock: 0,
+      toBlock: 'latest'}, function(er,ev){
+        ev.forEach(function(event){
+          let lHash = event.returnValues[0];
+          let cId = event.returnValues[1];
+          App.challenges[lHash] = cId;
+        }); 
+      // use App.challenged to Display that the listing is under a poll 
+    });
+    
+    App.tcrInstance.getPastEvents('_ResolveChallenge',{fromBlock: 0,
+      toBlock: 'latest'}, function(er,ev){
+        ev.forEach(function(event){
+          let lHash = event.returnValues[0];
+          delete App.challenges[lHash];
+        });
+      // if c_id does not exist in App.challenges then it is either resolved 
+      // or never created.
+    });
+    //Hack below
+    console.log("Reading History");
+    setTimeout(App.render(),5000);// wait for 5s
+  },
+  
+  render: function () {
+    // var tcrInstance;
+    var loader = $("#loader");
+    var content = $("#content");
+
+    loader.show();
+    content.hide();
 
     // Load contract data
     let courses = {};
     // let listings = []];
-
     
     App.tcrInstance.methods.getAllListings().call().then(function (l) {
       for (let i = 0; i < l[0].length; i++) {
@@ -123,6 +151,7 @@ App = {
         }
       }
       console.log(courses);
+      App.courses = courses;
       var reviewList = $(".collapsible");
       reviewList.empty();
       // console.log(minDeposit[0]);
@@ -144,19 +173,14 @@ App = {
       });
 
     });
-    // console.log("1");
-    // console.log(App.account);
-    // App.tokenInstance.methods.balanceOf("0x9AeCa19490FE0b4FF3Bbd021c9e7929beDa4BA77").call().then(console.log);
-    // console.log("2");
-    // console.log(listings);
-    // App.contracts.Tcr.options.data = {}
-    // App.contracts.Tcr.deploy().then(function(instance) {
-    //   console.log("Hello");
-    //   App.tcrInstance = instance;
-    //   console.log(App.tcrInstance.address);
-    // }).catch(function(error) {
-    //   console.warn(error);
-    // });
+
+  //   const filter = web3.eth.filter({
+  //     address: App.tcrInstance.options.address,
+  //   });
+  //   filter.watch((error, result) => {
+  //     console.log("Result", result);
+  //  })
+    
   },
 
   propose: async function () {
@@ -208,16 +232,15 @@ App = {
     .on('error',function(error){alert("Failed")});
   },
 
-  listenForEvents: async function() {
+  listenForEvents: function() {
 
     App.tcrInstance.events._Application({}, {
-          fromBlock: 0,
-          toBlock: 'latest'
+        fromBlock: 'latest'
         }).on('data',function(event) {
           console.log("New application", event)
-           //alert("I am an application!");
+           alert("I am an application!");
           // Reload when a new vote is recorded
-          App.render();
+          // App.render();
         });
 
         App.tcrInstance.events._Challenge({}, {

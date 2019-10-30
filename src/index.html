@@ -16,11 +16,11 @@
     <div class="container" style="width: 650px;">
       <div class="row">
         <div class="col-lg-12">
-          <h1 class="text-center">TCR Course Reviews</h1>
+          <h1 class="center-align">TCR Course Reviews</h1>
           <hr/>
           <br/>
           <div id="loader">
-            <p class="text-center">Loading...</p>
+            <p class="center-align">Loading...</p>
           </div>
           <div id="content" style="display: none;">
               <ul class="collapsible center-align">
@@ -47,7 +47,91 @@
         </div>
       </div>
     </div>
-     
+ 
+    <div class="row">
+      <form class="col s12">
+        <div class="row">
+          <div class="input-field col s6">
+            <input  id="amount" type="number" class="validate">
+            <label for="amount">Amount</label>
+          </div>
+          <div class="input-field col s6">
+            <input id="roll" type="text" class="validate">
+            <label for="roll">Roll number</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s6">
+            <input  id="course" type="text" class="validate">
+            <label for="course">Course Code</label>
+          </div>
+          <div class="input-field col s6">
+            <input id="rating" type="number" max="5" min = "0" class="validate">
+            <label for="rating">Rating</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <input  id="review" type="text" class="validate">
+            <label for="review">Review</label>
+          </div>
+        </div>
+      </form>
+    </div>
+    <center>
+      <button onclick="App.propose()">Propose</button>
+    </center>
+
+        <br/>
+        <br/>
+
+        <div class="row">
+          <form class="col s12">
+            <div class="row">
+              <div class="input-field col s6">
+                <input  id="hash" type="text" class="validate">
+                <label for="hash">Listing hash</label>
+              </div>
+              <div class="input-field col s6">
+                <input id="challenge_amount" type="number" class="validate">
+                <label for="challenge_amount">Amount</label>
+              </div>
+            </div>
+            <center>
+              <button onclick="App.challenge()">Challenge</button>
+            </center>
+          </form>
+        </div>
+            
+            <br/>
+            <br/>
+
+            <div class="row">
+              <form class="col s12">
+                <div class="row">
+                  <div class="input-field col s6">
+                    <input  id="VoteHash" type="text" class="validate">
+                    <label for="VoteHash">Listing hash</label>
+                  </div>
+                  <div class="input-field col s6">
+                    <input id="VoteAmount" type="number" class="validate">
+                    <label for="VoteAmount">Amount</label>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="input-field col s12">
+                    <input  id="Vote" type="number" max="1" min = "0"class="validate">
+                    <label for="Vote">Vote</label>
+                  </div>
+                </div>
+                <center>
+                  <button onclick="App.vote()">Vote</button>
+                </center>
+              </form>
+            </div>
+
+         
+    <!-- 
     Amount: <input type="number" id="amount" />
     Roll: <input type="text" id="roll" />
     <br/>
@@ -79,12 +163,10 @@
 
     Listing Hash: <input type="text" id="ClaimHash" />
     Challenge ID: <input type="number" id="ChallengeID" />
-    <button onclick="App.Claim()">ClaimRewards</button>
-
-      
+    <button onclick="App.Claim()">ClaimRewards</button>   
     <hr />
     </form>
-    
+     -->
     
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
