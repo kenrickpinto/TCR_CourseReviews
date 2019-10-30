@@ -198,6 +198,7 @@ App = {
     });
   },
 
+  // Claim has to done by you. This is not correct
   Claim: async function () {
     let hash = $('#ClaimHash').val();
     let id = $('#ChallengeID').val();
@@ -214,7 +215,7 @@ App = {
           toBlock: 'latest'
         }).on('data',function(event) {
           console.log("New application", event)
-          // alert("I am an application!");
+           //alert("I am an application!");
           // Reload when a new vote is recorded
           App.render();
         });
