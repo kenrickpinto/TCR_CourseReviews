@@ -69,7 +69,6 @@ App = {
     $.getJSON("Tcr.json", function (tcr) {
       // Instantiate a new truffle contract from the artifact
       let abi = tcr.abi;
-<<<<<<< HEAD
       console.log(App.web3);
       App.tcrInstance = new App.web3.eth.Contract(abi, "0xcd3255a2887d8CAfbC4019BF850591E4eBDfAeC3");
       // Connect provider to interact with contract
@@ -81,15 +80,6 @@ App = {
       $.getJSON("Token.json", function (token) {
         let abi = token.abi;
         App.tokenInstance = new App.web3.eth.Contract(abi, "0xbCa2c74BDF4CcfBfd4dA519595595f0075Bb6667");
-=======
-      App.tcrInstance = new App.web3.eth.Contract(abi, "0x2660c458C6f90d2EbA26A478c0e90d329075a0E2");
-      // Connect provider to interact with contract
-      App.tcrInstance.setProvider(App.web3Provider);
-    }).then(function () {
-      $.getJSON("Token.json", function (token) {
-        let abi = token.abi;
-        App.tokenInstance = new App.web3.eth.Contract(abi, "0x1baFDfC807e402Ca92993b874B83b5Ce49e571c7");
->>>>>>> f3a64969a9361decbd50812e0becb5545e48656b
         // Connect provider to interact with contract
         App.tokenInstance.setProvider(App.web3Provider);
         
@@ -258,20 +248,15 @@ App = {
   vote: async function () {
     let hash = $('#VoteHash').val();
     let amount = $('#VoteAmount').val();
-<<<<<<< HEAD
     let vote = $('#Vote').val();
     let choice = false;
     if (vote != 0)
         choice = true;
-=======
-    let choice = $('#Vote').val();
->>>>>>> f3a64969a9361decbd50812e0becb5545e48656b
     App.tokenInstance.methods.approve(App.tcrInstance.options.address, 10000)
     .send(function(r){
     App.tcrInstance.methods.vote(hash, amount, choice).send(console.log)
     .on('error',function(error){alert("Failed")})
     });
-<<<<<<< HEAD
   },
 
 
@@ -324,50 +309,11 @@ App = {
           console.log("New challenge", event)
           //alert("I am an alert box!");
           // Reload when a new vote is recorded
-=======
-  },
-
-  // Claim has to done by you. This is not correct
-  Claim: async function () {
-    let hash = $('#ClaimHash').val();
-    let id = $('#ChallengeID').val();
-    App.tcrInstance.methods.updateStatus(hash).send(function(r){
-    App.tcrInstance.methods.claimRewards(id).send()
-    .on('error',function(error){alert("Failed")})} )
-    .on('error',function(error){alert("Failed")});
-  },
-
-  listenForEvents: async function() {
-    var latestBlock;
-    App.web3.eth.getBlockNumber()
-    .then(function(b){
-      latestBlock = b;
-    });
-    // web3.eth.getBlock("latest").then(console.log); //get the latest blocknumber
-    // latestBlock = latestBlock.number;
-    // console.log("Latest - ",latestBlock);
-    App.tcrInstance.events._Application({fromBlock: 'latest'}, (error, event) => { 
-      if (error) {
-        console.log(error); return; 
-      } else {
-        if(event.blockNumber != latestBlock) {   //accept only new events
-          // alert("I am app");
-          latestBlock = latestBlock + 1;   //update the latest blockNumber
->>>>>>> f3a64969a9361decbd50812e0becb5545e48656b
           App.render();
         }
       }
     });
 
-<<<<<<< HEAD
-        App.tcrInstance.events._Vote({}, {
-          fromBlock: 0,
-          toBlock: 'latest'
-        }).on('data',function( event) {
-          console.log("New vote", event)
-          //alert("I am an alert box!");
-          // Reload when a new vote is recorded
-=======
     App.tcrInstance.events._Challenge({fromBlock: 'latest'}, (error, event) => { 
       if (error) {
         console.log(error); return; 
@@ -378,35 +324,11 @@ App = {
           let cId = event.returnValues[1];
           App.challenges[lHash] = cId;
           latestBlock = latestBlock + 1;   //update the latest blockNumber
->>>>>>> f3a64969a9361decbd50812e0becb5545e48656b
           App.render();
         }
       }
     });
 
-<<<<<<< HEAD
-        App.tcrInstance.events._ResolveChallenge({}, {
-          fromBlock: 0,
-          toBlock: 'latest'
-        }).on('data',function(event) {
-          console.log("Resolve challenge", event)
-          //alert("I am an alert box!");
-          // Reload when a new vote is recorded
-          App.render();
-        });
-
-        App.tcrInstance.events._RewardClaimed({}, {
-          fromBlock: 0,
-          toBlock: 'latest'
-        }).on('data',function( event) {
-          console.log("New challenge", event)
-          //alert("I am an alert box!");
-          // Reload when a new vote is recorded
-          App.render();
-        }); 
-
- 
-=======
     App.tcrInstance.events._Vote({fromBlock: 'latest'}, (error, event) => { 
       if (error) {
         console.log(error); return; 
@@ -451,7 +373,6 @@ App = {
     // var $temp = lHash;
     App.tcrInstance.methods.updateStatus(lHash).send();
     App.render();
->>>>>>> f3a64969a9361decbd50812e0becb5545e48656b
   }
 };
 
