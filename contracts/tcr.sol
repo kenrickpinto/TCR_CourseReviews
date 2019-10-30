@@ -138,7 +138,7 @@ contract Tcr {
 	}
 
     function strReview(Data memory data) private pure returns (string memory){
-	    string memory space = " ";
+	    string memory space = "|";
     	return string(abi.encodePacked(data.rollNumber, space, data.course, space, data.review, space, uint2str(data.rating)));
     }
     // returns whether a listing is already whitelisted
