@@ -176,20 +176,6 @@ contract Tcr {
         return (listingArr, hashArr, whitelistedArr);
     }
 
-    function getAllCourses() public view returns (string[] memory,uint[] memory, uint[] memory) {
-        string[] memory courseArr = new string[](courseNames.length);
-	    uint[] memory coursetotalArr = new uint[](courseNames.length);
-	    uint[] memory numberReviewsArr = new uint[] (courseNames.length);
-
-        for (uint256 i = 0; i < courseNames.length; i++) {
-            courseArr[i] = courseNames[i];
-	        Course memory temp_course = courses[courseNames[i]];
-	        coursetotalArr[i] = temp_course.courseTotal;
-    	    numberReviewsArr[i] = temp_course.numberOfReviews;
-        }
-        return (courseArr, coursetotalArr, numberReviewsArr);
-    }
-
     // get details of this registry (for UI)
     function getDetails() public view returns (string memory, address, uint, uint, uint) {
         string memory _name = name;
@@ -203,11 +189,6 @@ contract Tcr {
         require(appWasMade(_listingHash) || listingIns.whitelisted, "Listing does not exist.");
 
         return (listingIns.whitelisted, listingIns.owner, listingIns.deposit, listingIns.challengeId,strReview(listingIns.data));
-    }
-
-    function getCourseDetails(string memory _courseHash) public view returns (string memory, uint, uint){
-	    Course memory courseIns = courses[_courseHash];
-	    return (courseIns.courseCode, courseIns.courseTotal.div(courseIns.numberOfReviews),courseIns.numberOfReviews);
     }
 
     function CourseExists(string memory _courseHash) public view returns (uint) {

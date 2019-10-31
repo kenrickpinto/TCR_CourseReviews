@@ -74,7 +74,7 @@ App = {
       // Instantiate a new truffle contract from the artifact
       let abi = tcr.abi;
       console.log(App.web3);
-      App.tcrInstance = new App.web3.eth.Contract(abi, "0xd22F5F76116C1547bD5c88de7056d450f0221106");
+      App.tcrInstance = new App.web3.eth.Contract(abi, "0x31F4D58B5d571D9cEad98a7273dafeEe3275f206");
       // Connect provider to interact with contract
       App.tcrInstance.setProvider(App.web3Provider);
       App.listenForEvents();
@@ -83,7 +83,7 @@ App = {
     }).then(function () {
       $.getJSON("Token.json", function (token) {
         let abi = token.abi;
-        App.tokenInstance = new App.web3.eth.Contract(abi, "0xD5b93A19e4C24F77F29abdDE2ef4c0b408Cd5216");
+        App.tokenInstance = new App.web3.eth.Contract(abi, "0x955369CB2dD98fc75993c7c34917738c5f17D104");
         // Connect provider to interact with contract
         App.tokenInstance.setProvider(App.web3Provider);
         
@@ -99,7 +99,7 @@ App = {
       App.tcrInstance.options.from = App.account;
       App.tokenInstance.options.from = App.account;
 
-      return App.render();
+      return App.readHistory();
     });
   },
 
@@ -365,6 +365,15 @@ App = {
         }
       }
     }); 
+
+    window.ethereum.on('accountsChanged', function (accounts) {
+      // Time to reload your interface with accounts[0]!
+      App.account = accounts[0];
+      console.log(App.account)
+      App.tcrInstance.options.from = App.account;
+      App.tokenInstance.options.from = App.account;
+    })
+    
   },
 
   updateStatus: function(lHash){
