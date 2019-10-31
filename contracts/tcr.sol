@@ -118,23 +118,24 @@ contract Tcr {
         pollNonce = INITIAL_POLL_NONCE;
     }
 
-   function uint2str(uint _i) internal pure returns (string memory _uintAsString) {
-    if (_i == 0) {
-        return "0";
-    }
-    uint j = _i;
-    uint len;
-    while (j != 0) {
-        len++;
-        j /= 10;
-    }
-    bytes memory bstr = new bytes(len);
-    uint k = len - 1;
-    while (_i != 0) {
-        bstr[k--] = byte(uint8(48 + _i % 10));
-        _i /= 10;
-    }
-    return string(bstr);
+    function uint2str(uint _i) internal pure returns (string memory ) {
+        if (_i == 0) {
+            return "0";
+        }
+        uint j = _i;
+        uint len;
+        while (j != 0) {
+            len++;
+            j /= 10;
+        }
+        bytes memory bstr = new bytes(len);
+        uint k = len - 1;
+        j = _i;
+        while (j != 0) {
+            bstr[k--] = byte(uint8(48 + j % 10));
+            j /= 10;
+        }
+        return string(bstr);
 	}
 
     function strReview(Data memory data) private pure returns (string memory){
@@ -154,25 +155,29 @@ contract Tcr {
     // get all listing names (for UI)
     // not to be used in a production use case
     function getAllListings() public view returns (string[] memory, bytes32[] memory, bool[] memory) {
-        uint count = 0;
+        // uint count = 0;
         Listing memory templisting;
+        // for (uint256 i = 0; i < listingNames.length; i++) {
+            // templisting = listings[listingHashes[i]];
+            // if(bytes(templisting.data.course).length > 0)
+                // count = count + 1;
+        // }
+        // string[] memory listingArr = new string[](count);
+        // bytes32[] memory hashArr = new bytes32[](count);
+        // bool[] memory whitelistedArr = new bool[](count);
+
+        string[] memory listingArr = new string[](listingNames.length);
+        bytes32[] memory hashArr = new bytes32[](listingNames.length);
+        bool[] memory whitelistedArr = new bool[](listingNames.length);
+
         for (uint256 i = 0; i < listingNames.length; i++) {
             templisting = listings[listingHashes[i]];
-            if(bytes(templisting.data.course).length > 0)
-                count = count + 1;
-            }
-        string[] memory listingArr = new string[](count);
-        bytes32[] memory hashArr = new bytes32[](count);
-        bool[] memory whitelistedArr = new bool[](count);
-        
-        for (uint256 i = 0; i < listingNames.length; i++) {
-            templisting = listings[listingHashes[i]];
-            if(bytes(templisting.data.course).length > 0)
-            {
-            listingArr[i] = strReview(templisting.data);
-	        hashArr[i] = listingHashes[i];
-            whitelistedArr[i] = templisting.whitelisted;}
-            }
+            // if(bytes(templisting.data.course).length > 0) {
+                listingArr[i] = strReview(templisting.data);
+                hashArr[i] = listingHashes[i];
+                whitelistedArr[i] = templisting.whitelisted;
+            // }
+        }
         return (listingArr, hashArr, whitelistedArr);
     }
 

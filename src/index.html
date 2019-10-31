@@ -57,7 +57,7 @@
  
     <div class="row">
       <div class="center-align col s4">
-        <form>
+        <form id="proposeForm">
           <div class="row">
             <div class="input-field col s6">
               <input  id="amount" type="number" class="validate">
@@ -96,7 +96,7 @@
 
       <div class="center-align col s4">
         <div>
-          <form class="col s12">
+          <form class="col s12" id="challengeForm">
             <div class="row">
               <div class="input-field col s6">
                 <input  id="hash" type="text" class="validate">
@@ -113,7 +113,7 @@
           </button>
         </div>
         <div>
-            <form class>
+            <form class id="claimForm">
               <div class="row">
                 <div class="input-field col s12">
                   <input id="ChallengeID" type="number" class="validate">
@@ -129,7 +129,7 @@
       </div>
 
       <div class="col s4 center-align">
-          <form>
+          <form id="voteForm">
             <div class="row">
               <div class="input-field col s6">
                 <input  id="VoteHash" type="text" class="validate">
@@ -170,7 +170,7 @@
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script type="text/javascript" src="js/materialize.min.js"></script>    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/materialize.min.js"></script>    <!-- Include all compiled plugins (below), or include individual files as needed -->
     <!-- <script src="js/bootstrap.min.js"></script> -->
     <script src="js/web3.min.js"></script>
     <!-- <script src="js/truffle-contract.js"></script> -->
